@@ -125,7 +125,7 @@ function doPost(dannieOtPolzovatel) {
 
     var nomerDen = recordAnswer(zaprosphraseBotViber);
     var userId = getSenderId(zaprosphraseBotViber);
-    if (zaprosphraseBotViber == 'PN') {
+    if (nomerDen == 'PN') {
       sayText(MondayTimetable, userId, gAccessToken, gBotName, gBotAvatar)
     }
 
