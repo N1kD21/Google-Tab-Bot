@@ -1,5 +1,31 @@
 
 
+var gAccessToken = '48cea3353aa7d4d0-5e1406ae50cec7e7-ce191ad6f5c0d9da';
+var gBotName = 'SurveyBot';
+var gBotAvatar = 'https://raw.githubusercontent.com/devrelv/icons/master/bot_head.png';
+
+
+var MondayTimetable = '1'
+var TuesadayTimetable = '2'
+var WednesdayTimetable = '3'
+var ThersdayTimetable = '4'
+var FridayTimetable = '5'
+
+/*
+var sheetTabTimetable = SpreadsheetApp.getActiveSheet(PARAMETERS_SHEET_NAME).getRange(2, 1, 8, 2).getValues();
+
+var gAccessToken = sheetTabTimetable[0][1];
+var gBotName = sheetTabTimetable[1][1];
+var gBotAvatar = sheetTabTimetable[2][1];
+
+
+var MondayTimetable = sheetTabTimetable [3][1]
+var TuesadayTimetable = sheetTabTimetable [4][1]
+var WednesdayTimetable = sheetTabTimetable [5][1]
+var ThersdayTimetable = sheetTabTimetable [6][1]
+var FridayTimetable = sheetTabTimetable [7][1]
+*/
+
 // ---- State handling methdos ----
 
 function getSenderId(infoObOtpraviteleID) {
@@ -33,7 +59,7 @@ function sayText(raspisanieNaDen, userId, authToken, senderName, senderAvatar, t
       'name': senderName,
       'avatar': senderAvatar
     },
-    'tracking_data': JSON.stringify(trackingData || {})
+    'tracking_data': 'tracking_data'
   };
 
 /*
@@ -84,19 +110,6 @@ function isMessageEvent(postDataMessageEvent) {
 
 //------
 
-
-var sheetTabTimetable = SpreadsheetApp.getActiveSheet(PARAMETERS_SHEET_NAME).getRange(2, 1, 8, 2).getValues();
-
-var gAccessToken = sheetTabTimetable[0][1];
-var gBotName = sheetTabTimetable[1][1];
-var gBotAvatar = sheetTabTimetable[2][1];
-
-
-var MondayTimetable = sheetTabTimetable [3][1]
-var TuesadayTimetable = sheetTabTimetable [4][1]
-var WednesdayTimetable = sheetTabTimetable [5][1]
-var ThersdayTimetable = sheetTabTimetable [6][1]
-var FridayTimetable = sheetTabTimetable [7][1]
 
 function doGet(e) {
   var applicationDataFirstMessageToPolzovatel = {
