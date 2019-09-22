@@ -1,3 +1,140 @@
+
+
+// ---- State handling methdos ----
+
+function getSenderId(infoObOtpraviteleID) {
+  if (!infoObOtpraviteleID) return undefined;
+
+  if (infoObOtpraviteleID.sender) { // Might be a message event
+	  return infoObOtpraviteleID.sender.id;
+  }
+  else if (infoObOtpraviteleID.user) { // Might be a conversation_started event
+	return infoObOtpraviteleID.user.id;
+  }
+
+  return undefined;
+}
+
+function recordAnswer(objectMessage) {
+  var trackingData = JSON.parse(objectMessage.message.tracking_data);
+
+  var answerStringNameDay = extractTextFromMessage(objectMessage);
+  return answerStringNameDay;
+}
+
+
+function sayText(raspisanieNaDen, userId, authToken, senderName, senderAvatar, trackingData, keyboard) {
+
+  var data = {
+    'type' : 'text',
+    'text' : raspisanieNaDen,
+    'receiver': userId,
+    'sender': {
+      'name': senderName,
+      'avatar': senderAvatar
+    },
+    'tracking_data': JSON.stringify(trackingData || {})
+  };
+
+/*
+  if (keyboard) {
+    data.keyboard = keyboard;
+  }
+*/
+
+  var options = {
+    'async': true,
+    'crossDomain': true,
+    'method': 'POST',
+    'headers': {
+      'X-Viber-Auth-Token': authToken,
+      'content-type': 'application/json',
+      'cache-control': 'no-cache'
+    },
+   'payload' : JSON.stringify(data)
+  }
+
+  //Logger.log(options);
+  var result =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/send_message', options);
+
+  Logger.log(result);
+}
+
+
+
+
+function extractTextFromMessage(postDataIzvlechenieTexta) {                   // extract - извлечение => extractTextFromMessage - извлечение текста из message
+  if (!postDataIzvlechenieTexta || !postDataIzvlechenieTexta.message) return undefined;
+
+  return postDataIzvlechenieTexta.message.text;
+}
+
+//-----
+function isEvent(postDataAboutEvent, event) {                                         // сравнение пришедшего Евента с шаблоном.
+  return (postDataAboutEvent.event == event);
+}
+
+function isConversationStartEvent(postDataConversationStartEvent) {
+  return isEvent(postDataConversationStartEvent, 'conversation_started'); // проверяем является ли пришедший Евент - conversation_started
+}
+
+function isMessageEvent(postDataMessageEvent) {
+  return isEvent(postDataMessageEvent, 'message');              // Проверка является ли пришедший Евент - message
+}
+
+//------
+
+
+var sheetTabTimetable = SpreadsheetApp.getActiveSheet(PARAMETERS_SHEET_NAME).getRange(2, 1, 8, 2).getValues();
+
+var gAccessToken = sheetTabTimetable[0][1];
+var gBotName = sheetTabTimetable[1][1];
+var gBotAvatar = sheetTabTimetable[2][1];
+
+
+var MondayTimetable = sheetTabTimetable [3][1]
+var TuesadayTimetable = sheetTabTimetable [4][1]
+var WednesdayTimetable = sheetTabTimetable [5][1]
+var ThersdayTimetable = sheetTabTimetable [6][1]
+var FridayTimetable = sheetTabTimetable [7][1]
+
+function doGet(e) {
+  var applicationDataFirstMessageToPolzovatel = {
+    'heading': 'Hello Bot!',
+    'body': 'Welcome to the Chat Bot app.'
+  };
+
+  var JSONString = JSON.stringify(applicationDataFirstMessageToPolzovatel);
+  var JSONOutput = ContentService.createTextOutput(JSONString);
+  JSONOutput.setMimeType(ContentService.MimeType.JSON);
+  return JSONOutput
+}
+
+
+function doPost(dannieOtPolzovatel) {
+  Logger.log(dannieOtPolzovatel);
+
+  if (!dannieOtPolzovatel || !dannieOtPolzovatel.postData || !dannieOtPolzovatel.postData.contents) return;
+
+  try {
+    var zaprosphraseBotViber = JSON.parse(dannieOtPolzovatel.postData.contents);
+
+    // Accepting only message/conversation started events
+    if (!zaprosphraseBotViber || (!isConversationStartEvent(zaprosphraseBotViber) && !isMessageEvent(zaprosphraseBotViber))) return;
+
+    var nomerDen = recordAnswer(zaprosphraseBotViber);
+    var userId = getSenderId(zaprosphraseBotViber);
+    if (zaprosphraseBotViber == 'PN') {
+      sayText(MondayTimetable, userId, gAccessToken, gBotName, gBotAvatar)
+    }
+
+  } catch(error) {
+    Logger.log(error);
+  }
+}
+
+
+
 // Copyright 2017 Viber Media S.à r.l. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -180,42 +317,6 @@ function writeAnswer(userAnswerRow, questionIndex, answerString) {
 // ---- Send messages methods ----    Отсылание письма
 
 
-function sayText(raspisanieNaDen, userId, authToken, senderName, senderAvatar, trackingData, keyboard) {
-
-  var data = {
-    'type' : 'text',
-    'text' : raspisanieNaDen,
-    'receiver': userId,
-    'sender': {
-      'name': senderName,
-      'avatar': senderAvatar
-    },
-    'tracking_data': JSON.stringify(trackingData || {})
-  };
-
-/*
-  if (keyboard) {
-    data.keyboard = keyboard;
-  }
-*/
-
-  var options = {
-    'async': true,
-    'crossDomain': true,
-    'method': 'POST',
-    'headers': {
-      'X-Viber-Auth-Token': authToken,
-      'content-type': 'application/json',
-      'cache-control': 'no-cache'
-    },
-   'payload' : JSON.stringify(data)
-  }
-
-  //Logger.log(options);
-  var result =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/send_message', options);
-
-  Logger.log(result);
-}
 //==============================================================================================================================
 
 
@@ -227,10 +328,6 @@ function sendWelcomeMessage(postData) {
 }
 */
 
-function sendWelcomeMessage(postData) {
-  sayText(gMondayMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted());
-}
-
 /*
 function sendDoNotUnderstandInputMessage(postData) {
   sayText(gDoNotUnderstandMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar);
@@ -240,20 +337,7 @@ function sendEndMessage(postData) {
   sayText(gEndMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateSurveyEnded());
 }
 */
-// ---- State handling methdos ----
 
-function getSenderId(postData) {
-  if (!postData) return undefined;
-
-  if (postData.sender) { // Might be a message event
-	  return postData.sender.id;
-  }
-  else if (postData.user) { // Might be a conversation_started event
-	return postData.user.id;
-  }
-
-  return undefined;
-}
 /*
 function createKeyboard(values) {
 
@@ -387,18 +471,7 @@ function sendQuestionStep(postData, trackingData, shouldAdvanceQuestionIfInSurve
 
 
 /*
-function recordAnswer(postData) {
-  var trackingData = JSON.parse(postData.message.tracking_data);
-  var userAnswerRow = getUserAnswerRowFromState(trackingData);
-  if (userAnswerRow == undefined) return; // Abort recording if we could not extract the answer row.  Выход если мы не знаем ряд ответа
 
-  questionIndex = getQuestionIndexFromState(trackingData);
-  if (questionIndex == undefined) return; // Abort recording if we could not extract the question index. Выход если мы не знаем индекс вопроса
-
-  var answerString = extractTextFromMessage(postData);
-
-  writeAnswer(userAnswerRow, questionIndex, answerString);                        // Запись ответа
-}
 */
 
 
@@ -415,7 +488,14 @@ function initializeGlobalParametersIfNeeded() {
 
   // Fetch the range of cells B2:B10
   var parametersDataRange = parametersSheet.getRange(2, 1, 9, 2); // Skip header row; Read parameter rows
+  var values = SpreadsheetApp.getActiveSheet().getRange(2, 3, 6, 4).getValues();
+  Logger.log(values[0][0]);
+
 */
+
+
+
+
   // Fetch cell value for each row in the range.
 /*
   var parametersData = parametersDataRange.getValues()
@@ -429,6 +509,8 @@ function initializeGlobalParametersIfNeeded() {
   gDoNotUnderstandMessage = parametersData[6][1];
   gShouldUseRandomColors = parametersData[7][1];
   gDefaultKeyboardColor = parametersData[8][1];
+----
+
   var parametersData = parametersDataRange.getValues()
   gAccessToken = parametersData[0][1];
   gBotName = parametersData[1][1];
