@@ -6,35 +6,29 @@ var gAccessToken = sheetTabTimetable[0][1];
 var gBotName = sheetTabTimetable[1][1];
 var gBotAvatar = sheetTabTimetable[2][1];
 
-
-var MondayTimetable = sheetTabTimetable [3][1]
+/*
 var TuesadayTimetable = sheetTabTimetable [4][1]
 var WednesdayTimetable = sheetTabTimetable [5][1]
 var ThersdayTimetable = sheetTabTimetable [6][1]
 var FridayTimetable = sheetTabTimetable [7][1]
-
+*/
 
 // ---- State handling methdos ----
 
-function getSenderId(infoObOtpraviteleID) {
+function getSenderId(infoObOtpraviteleID) {                         // устанавливаем ID
   if (!infoObOtpraviteleID) return undefined;
 
-  if (infoObOtpraviteleID.sender) { // Might be a message event
+  if (infoObOtpraviteleID.sender) {                 // Might be a message event
 	  return infoObOtpraviteleID.sender.id;
   }
-  else if (infoObOtpraviteleID.user) { // Might be a conversation_started event
+  else if (infoObOtpraviteleID.user) {                  // Might be a conversation_started event
 	return infoObOtpraviteleID.user.id;
   }
 
   return undefined;
 }
 
-function recordAnswer(objectMessage) {
-  var trackingData = JSON.parse(objectMessage.message.tracking_data);
 
-  var answerStringNameDay = extractTextFromMessage(objectMessage);
-  return answerStringNameDay;
-}
 
 
 function sayText(raspisanieNaDen, userId, authToken, senderName, senderAvatar, trackingData, keyboard) {
@@ -67,7 +61,7 @@ function sayText(raspisanieNaDen, userId, authToken, senderName, senderAvatar, t
     },
    'payload' : JSON.stringify(data)
   }
-
+  Logge.log(options);
   //Logger.log(options);
   var result =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/send_message', options);
 
@@ -83,13 +77,15 @@ function extractTextFromMessage(postDataIzvlechenieTexta) {                   //
   return postDataIzvlechenieTexta.message.text;
 }
 
+
+
 //-----
 function isEvent(postDataAboutEvent, event) {                                         // сравнение пришедшего Евента с шаблоном.
   return (postDataAboutEvent.event == event);
 }
 
-function isConversationStartEvent(postDataConversationStartEvent) {
-  return isEvent(postDataConversationStartEvent, 'conversation_started'); // проверяем является ли пришедший Евент - conversation_started
+function isConversationStartEvent(postDataConversationStartedEvent) {
+  return isEvent(postDataConversationStartedEvent, 'conversation_started'); // проверяем является ли пришедший Евент - conversation_started
 }
 
 function isMessageEvent(postDataMessageEvent) {
@@ -118,15 +114,19 @@ function doPost(dannieOtPolzovatel) {
   if (!dannieOtPolzovatel || !dannieOtPolzovatel.postData || !dannieOtPolzovatel.postData.contents) return;
 
   try {
-    var zaprosphraseBotViber = JSON.parse(dannieOtPolzovatel.postData.contents);
+    var zaprosBotViber = JSON.parse(dannieOtPolzovatel.postData.contents);
 
     // Accepting only message/conversation started events
-    if (!zaprosphraseBotViber || (!isConversationStartEvent(zaprosphraseBotViber) && !isMessageEvent(zaprosphraseBotViber))) return;
+//    if (!zaprosphraseBotViber || (!isConversationStartEvent(zaprosphraseBotViber) && !isMessageEvent(zaprosphraseBotViber))) return;
 
-    var nomerDen = recordAnswer(zaprosphraseBotViber);
-    var userId = getSenderId(zaprosphraseBotViber);
+    var nomerDenNedeli = extractTextFromMessage(zaprosBotViber);
+    var userId = getSenderId(zaprosBotViber);
     if (nomerDen == 'PN') {
+      var MondayTimetable = sheetTabTimetable [3][1]
+
       sayText(MondayTimetable, userId, gAccessToken, gBotName, gBotAvatar)
+    } else {
+      sayText('129. Первый вход', userId, gAccessToken, gBotName, gBotAvatar)
     }
 
   } catch(error) {
