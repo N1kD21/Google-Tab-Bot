@@ -276,11 +276,12 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
         var didHandle = true;
         return didHandle;
     default:
-/*
-        sayText('1 - Понедельник 2 - Вторник 3 - Среда 4 - Четверг 5 - Пятница', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+ /*
+      sayText('1 - Понедельник 2 - Вторник 3 - Среда 4 - Четверг 5 - Пятница', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
-*/
+ */
+
 
     if (!questionRow || !postData || questionIndex == undefined || userAnswerRow == undefined) return false;
 
