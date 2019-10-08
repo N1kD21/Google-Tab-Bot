@@ -37,6 +37,11 @@ var TuesdayRaspisanie = 'Вторник';
 var WednesdayRaspisanie = 'Среда';
 var ThersdayRaspisanie = 'Четверг';
 var FridayRaspisanie = 'Пятница';
+var MondayNazwa;
+var TuesdayNazwa;
+var WednesdayNazwa;
+var ThersdayNazwa;
+var FridayNazwa;
 // ---- Input validation methods ----
 
 function isEvent(postData, event) {
@@ -216,7 +221,7 @@ function sayText(text, userId, authToken, senderName, senderAvatar, trackingData
 }
 
 function sendWelcomeMessage(postData) {
-  var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+  var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
   sayText(gWelcomeMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
 }
 
@@ -319,7 +324,7 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
         var didHandle = true;
         return didHandle;
         */
-        var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
 //        sayText('1. Укр. мова.' +  '\u000A' +  '2. Физкультура' +  '\u000A' +  '3. Я исслед. мир.' +  '\u000A' +  '4. Обуч. гр.' +  '\u000A' +  '5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         sayText(MondayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
@@ -327,25 +332,25 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
         var didHandle = true;
         return didHandle;
     case 'Вторник':
-        var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+    var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
         sayText(TuesdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
   case 'Среда':
-        var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+  var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
         sayText(WednesdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
   case 'Четверг':
-        var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+  var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
         sayText(ThersdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
   case 'Пятница':
-        var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+  var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
         sayText(FridayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
@@ -532,6 +537,16 @@ function initializeGlobalParametersIfNeeded() {
   WednesdayRaspisanie = parametersData[11][1];
   ThersdayRaspisanie = parametersData[12][1];
   FridayRaspisanie = parametersData[13][1];
+  MondayNazwa = parametersData[9][0];
+  TuesdayNazwa = parametersData[10][0];
+  WednesdayNazwa = parametersData[11][0];
+  ThersdayNazwa = parametersData[12][0];
+  FridayNazwa = parametersData[13][0];
+  var MondayNazwaString = MondayNazwa.toString();
+  var TuesdayNazwaString = TuesdayNazwa.toString();
+  var WednesdayNazwaString = WednesdayNazwa.toString();
+  var ThersdayNazwaString = ThersdayNazwa.toString();
+  var FridayNazwaString = FridayNazwa.toString();
 }
 
 // ---- Post/Get handlers ----
