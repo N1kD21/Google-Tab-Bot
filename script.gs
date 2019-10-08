@@ -13,6 +13,7 @@
 // limitations under the License.
 
 // Constants
+var RASPISANIE_SHEET_NAME = 'raspisanie';
 var PARAMETERS_SHEET_NAME = 'parameters';
 var QUESTIONS_SHEET_NAME = 'questions';
 var ANSWERS_SHEET_NAME = 'answers';
@@ -211,7 +212,7 @@ function sayText(text, userId, authToken, senderName, senderAvatar, trackingData
 }
 
 function sendWelcomeMessage(postData) {
-  var keyboardObject = createKeyboard([gWelcomeStartButton]);
+  var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
   sayText(gWelcomeMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
 }
 
@@ -252,27 +253,95 @@ function createKeyboard(values) {
 function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) {
 
   var answerString = extractTextFromMessage(postData);
+/*
+  var tablicaRaspisanie = SpreadsheetApp.getActiveSpreadsheet();
 
+  var raspisanieSheet = tablicaRaspisanie.getSheetByName(RASPISANIE_SHEET_NAME);
 
+  // Fetch the range of cells B2:B10
+  var raspisanieDataRange = raspisanieSheet.getRange(2, 1, 24, 2); // Skip header row; Read parameter rows
+  var MonUroki = [];
+  var TueUroki = [];
+  var WenUroki = [];
+  var TheUroki = [];
+  var FriUroki = [];
+  var MonUrok1;
+  var MonUrok2;
+  var MonUrok3;
+  var MonUrok4;
+  var MonUrok5;
+
+  // Fetch cell value for each row in the range.
+  var raspisData = raspisanieDataRange.getValues()
+  MonUrok1 = raspisData[0][1];
+  MonUrok2 = raspisData[1][1];
+  MonUrok3 = raspisData[2][1];
+  MonUrok4 = raspisData[3][1];
+  MonUrok5 = raspisData[4][1];
+  TueUroki[0] = raspisData[5][1];
+  TueUroki[1] = raspisData[6][1];
+  TueUroki[2] = raspisData[7][1];
+  TueUroki[3] = raspisData[8][1];
+  WenUroki [0] = raspisData[9][1];
+  WenUroki [1] = raspisData[10][1];
+  WenUroki [2] = raspisData[11][1];
+  WenUroki [3] = raspisData[12][1];
+  WenUroki [4] = raspisData[13][1];
+  TheUroki [0] = raspisData[14][1];
+  TheUroki [1] = raspisData[15][1];
+  TheUroki [2] = raspisData[16][1];
+  TheUroki [3] = raspisData[17][1];
+  TheUroki [4] = raspisData[18][1];
+  FriUroki [0] = raspisData[19][1];
+  FriUroki [1] = raspisData[20][1];
+  FriUroki [2] = raspisData[21][1];
+  FriUroki [3] = raspisData[22][1];
+
+  MonUroki[0] = MonUrok1;
+  MonUroki[1] = MonUrok2;
+  MonUroki[2] = MonUrok3;
+  MonUroki[3] = MonUrok4;
+  MonUroki[4] = MonUrok5;
+  
+  var srtoka = raspisData.toString();
+ */ 
   switch (answerString) {
   case 'Понедельник':
-        sayText('1. Укр. мова 2. Физкультура 3. Я исслед. мир 4. Обуч. гр. 5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+/*      
+        sayText(srtoka, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        for (var i = 0; i < MonUroki.length; i++) {
+          sayText(MonUroki[i], getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        }
         var didHandle = true;
         return didHandle;
-  case 'Вторник':
-        sayText('1. Обуч. грам. 2. Укр. яз. 3. Матем. 4. Обуч. грам.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        */ 
+        var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+
+        sayText('1. Укр. мова.' +  '\u000A' +  '2. Физкультура' +  '\u000A' +  '3. Я исслед. мир.' +  '\u000A' +  '4. Обуч. гр.' +  '\u000A' +  '5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        var didHandle = true;
+        return didHandle;
+    case 'Вторник':
+        var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+
+        sayText('1. Обуч. грам.' +  '\u000A' +  '2. Укр. яз.' +  '\u000A' +  '3. Матем.' +  '\u000A' +  '4. Обуч. грам.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
   case 'Среда':
-        sayText('1.Я исслед. мир 2. Физкульт 3. Укр. язык 4. Матем 5. Искуство', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+
+        sayText('1. Я исслед. мир' +  '\u000A' +  '2. Физкульт' +  '\u000A' +  '3. Укр. язык' +  '\u000A' +  '4. Матем' +  '\u000A' +  '5. Искуство', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
   case 'Четверг':
-        sayText('1. Матем 2. Плаванье 3. Труд 4. Англ. яз. 5. Укр. мова', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+
+        sayText('1. Матем' +  '\u000A' +  '2. Плаванье' +  '\u000A' +  '3. Труд' +  '\u000A' +  '4. Англ. яз.' +  '\u000A' +  '5. Укр. мова', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
   case 'Пятница':
-        sayText('1. Я исслед. мир 2. Матем 3. Англ. яз. 4. Обуч. грам.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
+
+        sayText('1. Я исслед. мир' +  '\u000A' +  '2. Матем' +  '\u000A' +  '3. Англ. яз.' +  '\u000A' +  '4. Обуч. грам.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
     default:
