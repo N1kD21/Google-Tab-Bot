@@ -32,6 +32,11 @@ var gEndMessage = 'Your end message from the parameters sheet';
 var gDoNotUnderstandMessage = 'Your do not understand input message from the parameters sheet';
 var gShouldUseRandomColors = false;
 var gDefaultKeyboardColor = 'Your default keyboard option color from the parameters sheet';
+var MondayRaspisanie = 'Понедельник';
+var TuesdayRaspisanie = 'Вторник';
+var WednesdayRaspisanie = 'Среда';
+var ThersdayRaspisanie = 'Четверг';
+var FridayRaspisanie = 'Пятница';
 
 // ---- Input validation methods ----
 
@@ -254,27 +259,6 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
 
   var answerString = extractTextFromMessage(postData);
 
-  var tablicaRaspisanie = SpreadsheetApp.getActiveSpreadsheet();
-
-  var raspisanieSheet = tablicaRaspisanie.getSheetByName(RASPISANIE_SHEET_NAME);
-
-  // Fetch the range of cells B2:B10
-  var raspisanieDataRange = raspisanieSheet.getRange(2, 1, 24, 2); // Skip header row; Read parameter rows
-  var MonUrok1 = 'Per urok';
-  var MonUrok2 = 'Vtor urok';
-  var MonUrok3 = 'Tret urok';
-  var MonUrok4 = 'Chet urok';
-  var MonUrok5 = 'Pyat urok';
-
-  // Fetch cell value for each row in the range.
-  var raspisData = raspisanieDataRange.getValues()
-  MonUrok1 = raspisData[0][1];
-  MonUrok2 = raspisData[1][1];
-  MonUrok3 = raspisData[2][1];
-  MonUrok4 = raspisData[3][1];
-  MonUrok5 = raspisData[4][1];
-
-  var srtoka = raspisData.toString();
   switch (answerString) {
   case 'Понедельник':
 /*
@@ -287,7 +271,7 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
         */
         var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
 
-        sayText('1.' + MonUrok1 +  '\u000A' +  '2.' + MonUrok2 +  '\u000A' +  '3.' + MonUrok3 +  '\u000A' +  '4.' + MonUrok4 +  '\u000A' +  '5.' + MonUrok5, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(MondayRaspisanie, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
     case 'Вторник':
@@ -486,11 +470,11 @@ function initializeGlobalParametersIfNeeded() {
   gBotName = parametersData[1][1];
   gBotAvatar = parametersData[2][1];
   gWelcomeMessage = parametersData[3][1];
-  gWelcomeStartButton = parametersData[4][1];
-  gEndMessage = parametersData[5][1];
-  gDoNotUnderstandMessage = parametersData[6][1];
-  gShouldUseRandomColors = parametersData[7][1];
-  gDefaultKeyboardColor = parametersData[8][1];
+  MondayRaspisanie = parametersData[4][1];
+  TuesdayRaspisanie = parametersData[5][1];
+  WednesdayRaspisanie = parametersData[6][1];
+  ThersdayRaspisanie = parametersData[7][1];
+  FridayRaspisanie = parametersData[8][1];
 }
 
 // ---- Post/Get handlers ----
