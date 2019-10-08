@@ -260,16 +260,11 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
 
   // Fetch the range of cells B2:B10
   var raspisanieDataRange = raspisanieSheet.getRange(2, 1, 24, 2); // Skip header row; Read parameter rows
-  var MonUroki = [];
-  var TueUroki = [];
-  var WenUroki = [];
-  var TheUroki = [];
-  var FriUroki = [];
-  var MonUrok1;
-  var MonUrok2;
-  var MonUrok3;
-  var MonUrok4;
-  var MonUrok5;
+  var MonUrok1 = 'Per urok';
+  var MonUrok2 = 'Vtor urok';
+  var MonUrok3 = 'Tret urok';
+  var MonUrok4 = 'Chet urok';
+  var MonUrok5 = 'Pyat urok';
 
   // Fetch cell value for each row in the range.
   var raspisData = raspisanieDataRange.getValues()
@@ -278,30 +273,6 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
   MonUrok3 = raspisData[2][1];
   MonUrok4 = raspisData[3][1];
   MonUrok5 = raspisData[4][1];
-  TueUroki[0] = raspisData[5][1];
-  TueUroki[1] = raspisData[6][1];
-  TueUroki[2] = raspisData[7][1];
-  TueUroki[3] = raspisData[8][1];
-  WenUroki [0] = raspisData[9][1];
-  WenUroki [1] = raspisData[10][1];
-  WenUroki [2] = raspisData[11][1];
-  WenUroki [3] = raspisData[12][1];
-  WenUroki [4] = raspisData[13][1];
-  TheUroki [0] = raspisData[14][1];
-  TheUroki [1] = raspisData[15][1];
-  TheUroki [2] = raspisData[16][1];
-  TheUroki [3] = raspisData[17][1];
-  TheUroki [4] = raspisData[18][1];
-  FriUroki [0] = raspisData[19][1];
-  FriUroki [1] = raspisData[20][1];
-  FriUroki [2] = raspisData[21][1];
-  FriUroki [3] = raspisData[22][1];
-
-  MonUroki[0] = MonUrok1;
-  MonUroki[1] = MonUrok2;
-  MonUroki[2] = MonUrok3;
-  MonUroki[3] = MonUrok4;
-  MonUroki[4] = MonUrok5;
 
   var srtoka = raspisData.toString();
   switch (answerString) {
