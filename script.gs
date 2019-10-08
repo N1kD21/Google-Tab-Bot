@@ -45,7 +45,7 @@ function isMessageEvent(postData) {
 function isMessageType(postData, type) {
   if (!isMessageEvent(postData)) return false;
   if (!postData.message ||  postData.message.type !== type) return false;
-  
+
   return true;
 }
 
@@ -59,7 +59,7 @@ function isTextMessage(postData) {
 
 function extractTextFromMessage(postData) {
   if (!postData || !postData.message) return undefined;
-  
+
   return postData.message.text;
 }
 
@@ -118,28 +118,28 @@ function getUserAnswerRowFromState(trackingData) {
 
 function getQuestionByIndex(questionIndex) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  
+
   var questionsSheet = ss.getSheetByName(QUESTIONS_SHEET_NAME);
   var lastRow = questionsSheet.getLastRow();
-  
+
   if (Number(lastRow) < Number(questionIndex)) return undefined;
-  
+
   var range = questionsSheet.getRange(2 + questionIndex, 1, 1, 3);  // Skip header row; Read whole row
   var values = range.getValues()[0];
   return values;
 }
 
 function getAnswerIndexForUser(userId) {
-  
+
   var doc     = SpreadsheetApp.getActiveSpreadsheet();
   var sheet   = doc.getSheetByName(ANSWERS_SHEET_NAME); // select the responses sheet
   var headerStartRowPosition = 2; // Skip header row.
-  
+
   // Try to locate if the user already answered questions or this is a new question
   var userIdsValues = sheet.getRange(headerStartRowPosition, 1, sheet.getLastRow(), 1).getValues(); // Skip header row; Read all rows, first column
-  
+
   var userAnswerRow = undefined;
-  
+
   for (var i = 0; i < userIdsValues.length; i++) {
     if (!userIdsValues[i][0]) {
       break;
@@ -147,36 +147,36 @@ function getAnswerIndexForUser(userId) {
     if (userIdsValues[i][0] == userId) {
       userAnswerRow = i + headerStartRowPosition; // Make sure we not return the zero index but the actual row number
       break;
-    }    
+    }
   }
-  
+
   // This is a new user. Get the new row!
   if (userAnswerRow == undefined) {
     userAnswerRow = sheet.getLastRow() + 1; // get the next row
     var row = [ userId ]; // first element in the row should always be the user id
     sheet.getRange(userAnswerRow, 1, 1, row.length).setValues([row]);
-    
+
     // Make sure the cell is updated right away in case the script is interrupted
     SpreadsheetApp.flush();
   }
-  
+
   return userAnswerRow;
 }
 
 function writeAnswer(userAnswerRow, questionIndex, answerString) {
   var doc     = SpreadsheetApp.getActiveSpreadsheet();
   var sheet   = doc.getSheetByName(ANSWERS_SHEET_NAME); // select the responses sheet
-  
+
   var row = [ "" + answerString ]; // Make sure we write the answer as String (in case of numbers)
   sheet.getRange(userAnswerRow, questionIndex + 2, 1, row.length).setValues([row]); // Write the answer after the user id column
-  
+
   // Make sure the cell is updated right away in case the script is interrupted
   SpreadsheetApp.flush();
 }
 
 // ---- Send messages methods ----
 function sayText(text, userId, authToken, senderName, senderAvatar, trackingData, keyboard) {
-  
+
   var data = {
     'type' : 'text',
     'text' : text,
@@ -187,11 +187,11 @@ function sayText(text, userId, authToken, senderName, senderAvatar, trackingData
     },
     'tracking_data': JSON.stringify(trackingData || {})
   };
-  
+
   if (keyboard) {
     data.keyboard = keyboard;
   }
-  
+
   var options = {
     'async': true,
     'crossDomain': true,
@@ -203,10 +203,10 @@ function sayText(text, userId, authToken, senderName, senderAvatar, trackingData
     },
    'payload' : JSON.stringify(data)
   }
-  
+
   //Logger.log(options);
   var result =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/send_message', options);
-  
+
   Logger.log(result);
 }
 
@@ -239,7 +239,7 @@ function getSenderId(postData) {
 }
 
 function createKeyboard(values) {
-  
+
   var keyboardGenerator = new KeyboardGenerator();
   for(var i = 0; i < values.length; i++) {
     var keyboardValue = values[i];
@@ -253,43 +253,43 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
 
   var answerString = extractTextFromMessage(postData);
 
-  
+
   switch (answerString) {
-  case '1':
+  case 'Понедельник':
         sayText('1. Укр. мова 2. Физкультура 3. Я исслед. мир 4. Обуч. гр. 5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
-  case '2':
+  case 'Вторник':
         sayText('1. Обуч. грам. 2. Укр. яз. 3. Матем. 4. Обуч. грам.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
-  case '3':
+  case 'Среда':
         sayText('1.Я исслед. мир 2. Физкульт 3. Укр. язык 4. Матем 5. Искуство', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
-  case '4':
+  case 'Четверг':
         sayText('1. Матем 2. Плаванье 3. Труд 4. Англ. яз. 5. Укр. мова', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
-  case '5':
+  case 'Пятница':
         sayText('1. Я исслед. мир 2. Матем 3. Англ. яз. 4. Обуч. грам.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
-        return didHandle;      
+        return didHandle;
     default:
  /*
       sayText('1 - Понедельник 2 - Вторник 3 - Среда 4 - Четверг 5 - Пятница', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
-        return didHandle;     
- */     
-      
+        return didHandle;
+ */
+
 
     if (!questionRow || !postData || questionIndex == undefined || userAnswerRow == undefined) return false;
-  
+
     var didHandle = false;
-  
+
     var questionType = questionRow[0];
     var questionMessage = questionRow[1];
-  
+
     if (questionType === 'keyboard') {
       var questionExtras = questionRow[2];
       var keyboardFields = questionExtras.split(';');
@@ -301,27 +301,27 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
       sayText(questionMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow));
       didHandle = true;
     }
-  
+
     return didHandle;
   }
-  
-  
-  
-/*  
+
+
+
+/*
   if (answerString == 'Pn') {
         sayText('1. Укр. мова 2. Физкультура 3. Я исслед. мир 4. Обуч. гр. 5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
-  } 
+  }
   else {
-      
+
     if (!questionRow || !postData || questionIndex == undefined || userAnswerRow == undefined) return false;
-  
+
     var didHandle = false;
-  
+
     var questionType = questionRow[0];
     var questionMessage = questionRow[1];
-  
+
     if (questionType === 'keyboard') {
       var questionExtras = questionRow[2];
       var keyboardFields = questionExtras.split(';');
@@ -333,7 +333,7 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
       sayText(questionMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow));
       didHandle = true;
     }
-  
+
     return didHandle;
   }
 */
@@ -341,15 +341,15 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
 
 function isValidAnswer(postData, questionRow) {
   if (!questionRow || !postData) return false;
-  
+
   var answerString = extractTextFromMessage(postData);
   if (answerString == undefined) return false;
-  
+
   var isValid = false;
-  
+
   var questionType = questionRow[0];
   var questionMessage = questionRow[1];
-  
+
   if (questionType === 'keyboard' || questionType === 'range') {
     var questionExtras = questionRow[2].toLowerCase();
     var acceptableAnswers = questionExtras.split(';');
@@ -358,74 +358,74 @@ function isValidAnswer(postData, questionRow) {
   else if (questionType === 'text') { // Free text. Any text is valid
     isValid = true;
   }
-  
+
   return isValid;
 }
 
 function didSupplyValidAnswer(postData) {
-  
+
   var trackingData = JSON.parse(postData.message.tracking_data);
-  
+
   var currentQuestionIndex = undefined;
-  
+
   if (isStateInSurvey(trackingData)) {
     currentQuestionIndex = getQuestionIndexFromState(trackingData);
   }
-  
+
   var isValid = false;
-  
+
   if (currentQuestionIndex != undefined) {
     var questionRow = getQuestionByIndex(currentQuestionIndex);
     isValid = isValidAnswer(postData, questionRow);
   }
-  
+
   return isValid;
 }
 
 function sendQuestionStep(postData, trackingData, shouldAdvanceQuestionIfInSurvey) {
-  
+
   var questionIndex = undefined;
-  
+
   if (isStateStartedSurvey(trackingData)) {
     questionIndex = 0;
   }
   else if (isStateInSurvey(trackingData)) {
     questionIndex = getQuestionIndexFromState(trackingData);
-    
+
     if (shouldAdvanceQuestionIfInSurvey) {
       questionIndex++;
     }
   }
-  
+
   var didHandle = false;
-  
+
   if (questionIndex != undefined) {
-    
+
     // Figure out if the user already have an answer row in state, if not let's create one and tag it.
     var userAnswerRow = getUserAnswerRowFromState(trackingData);
     if (!userAnswerRow) {
       userAnswerRow = getAnswerIndexForUser(getSenderId(postData));
     }
-    
+
     var questionRow = getQuestionByIndex(questionIndex);
     didHandle = tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow);
   }
-  
+
   if (!didHandle) {
     sendEndMessage(postData);
   }
 }
-  
+
 function recordAnswer(postData) {
   var trackingData = JSON.parse(postData.message.tracking_data);
   var userAnswerRow = getUserAnswerRowFromState(trackingData);
   if (userAnswerRow == undefined) return; // Abort recording if we could not extract the answer row.
-  
+
   questionIndex = getQuestionIndexFromState(trackingData);
   if (questionIndex == undefined) return; // Abort recording if we could not extract the question index.
-  
+
   var answerString = extractTextFromMessage(postData);
-  
+
   writeAnswer(userAnswerRow, questionIndex, answerString);
 }
 
@@ -433,14 +433,14 @@ function recordAnswer(postData) {
 function initializeGlobalParametersIfNeeded() {
   if (gDidFillParameters) return;
   gDidFillParameters = true;
-  
+
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  
+
   var parametersSheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
-  
+
   // Fetch the range of cells B2:B10
-  var parametersDataRange = parametersSheet.getRange(2, 1, 9, 2); // Skip header row; Read parameter rows 
-  
+  var parametersDataRange = parametersSheet.getRange(2, 1, 9, 2); // Skip header row; Read parameter rows
+
   // Fetch cell value for each row in the range.
   var parametersData = parametersDataRange.getValues()
   gAccessToken = parametersData[0][1];
@@ -457,23 +457,23 @@ function initializeGlobalParametersIfNeeded() {
 // ---- Post/Get handlers ----
 function doPost(e) {
   Logger.log(e);
-  
+
   if (!e || !e.postData || !e.postData.contents) return;
-  
+
   try {
     var postData = JSON.parse(e.postData.contents);
-        
+
     // Accepting only message/conversation started events
-    if (!postData || (!isConversationStartEvent(postData) && !isMessageEvent(postData))) return; 
-    
+    if (!postData || (!isConversationStartEvent(postData) && !isMessageEvent(postData))) return;
+
     initializeGlobalParametersIfNeeded();
-    
+
     if (isEmptyState(postData)) {
       sendWelcomeMessage(postData);
     }
     else {
       var trackingData = JSON.parse(postData.message.tracking_data);
-      
+
       if (isStateStartedSurvey(trackingData)) {
         sendQuestionStep(postData, trackingData, false);
       }
@@ -483,23 +483,23 @@ function doPost(e) {
       }
       else if (isStateInSurvey(trackingData)) {
         var isValidAnswer = false;
-        
+
         if (!isTextMessage(postData)) {
           sendDoNotUnderstandInputMessage(postData);
         }
         else {
           isValidAnswer = didSupplyValidAnswer(postData);
         }
-        
+
         if (isValidAnswer) {
           recordAnswer(postData);
         }
-        
+
         // Advance to the next question if a valid answer, or just ask the question again if not.
         sendQuestionStep(postData, trackingData, isValidAnswer);
       }
     }
-  } catch(error) { 
+  } catch(error) {
     Logger.log(error);
   }
 }
@@ -509,7 +509,7 @@ function doGet(e) {
     'heading': 'Hello Bot!',
     'body': 'Welcome to the Chat Bot app.'
   };
-  
+
   var JSONString = JSON.stringify(appData);
   var JSONOutput = ContentService.createTextOutput(JSONString);
   JSONOutput.setMimeType(ContentService.MimeType.JSON);
