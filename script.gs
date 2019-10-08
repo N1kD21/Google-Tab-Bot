@@ -37,7 +37,6 @@ var TuesdayRaspisanie = 'Вторник';
 var WednesdayRaspisanie = 'Среда';
 var ThersdayRaspisanie = 'Четверг';
 var FridayRaspisanie = 'Пятница';
-
 // ---- Input validation methods ----
 
 function isEvent(postData, event) {
@@ -258,7 +257,58 @@ function createKeyboard(values) {
 function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) {
 
   var answerString = extractTextFromMessage(postData);
+/*
+  var tablicaRaspisanie = SpreadsheetApp.getActiveSpreadsheet();
 
+  var raspisanieSheet = tablicaRaspisanie.getSheetByName(RASPISANIE_SHEET_NAME);
+
+  // Fetch the range of cells B2:B10
+  var raspisanieDataRange = raspisanieSheet.getRange(2, 1, 24, 2); // Skip header row; Read parameter rows
+  var MonUroki = [];
+  var TueUroki = [];
+  var WenUroki = [];
+  var TheUroki = [];
+  var FriUroki = [];
+  var MonUrok1;
+  var MonUrok2;
+  var MonUrok3;
+  var MonUrok4;
+  var MonUrok5;
+
+  // Fetch cell value for each row in the range.
+  var raspisData = raspisanieDataRange.getValues()
+  MonUrok1 = raspisData[0][1];
+  MonUrok2 = raspisData[1][1];
+  MonUrok3 = raspisData[2][1];
+  MonUrok4 = raspisData[3][1];
+  MonUrok5 = raspisData[4][1];
+  TueUroki[0] = raspisData[5][1];
+  TueUroki[1] = raspisData[6][1];
+  TueUroki[2] = raspisData[7][1];
+  TueUroki[3] = raspisData[8][1];
+  WenUroki [0] = raspisData[9][1];
+  WenUroki [1] = raspisData[10][1];
+  WenUroki [2] = raspisData[11][1];
+  WenUroki [3] = raspisData[12][1];
+  WenUroki [4] = raspisData[13][1];
+  TheUroki [0] = raspisData[14][1];
+  TheUroki [1] = raspisData[15][1];
+  TheUroki [2] = raspisData[16][1];
+  TheUroki [3] = raspisData[17][1];
+  TheUroki [4] = raspisData[18][1];
+  FriUroki [0] = raspisData[19][1];
+  FriUroki [1] = raspisData[20][1];
+  FriUroki [2] = raspisData[21][1];
+  FriUroki [3] = raspisData[22][1];
+
+  MonUroki[0] = MonUrok1;
+  MonUroki[1] = MonUrok2;
+  MonUroki[2] = MonUrok3;
+  MonUroki[3] = MonUrok4;
+  MonUroki[4] = MonUrok5;
+
+  var srtoka = raspisData.toString();
+ */
   switch (answerString) {
   case 'Понедельник':
 /*
@@ -271,31 +321,33 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
         */
         var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
 
-        sayText(MondayRaspisanie, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+//        sayText('1. Укр. мова.' +  '\u000A' +  '2. Физкультура' +  '\u000A' +  '3. Я исслед. мир.' +  '\u000A' +  '4. Обуч. гр.' +  '\u000A' +  '5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(MondayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+
         var didHandle = true;
         return didHandle;
     case 'Вторник':
         var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
 
-        sayText('1. Обуч. грам.' +  '\u000A' +  '2. Укр. яз.' +  '\u000A' +  '3. Матем.' +  '\u000A' +  '4. Обуч. грам.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(TuesdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
   case 'Среда':
         var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
 
-        sayText('1. Я исслед. мир' +  '\u000A' +  '2. Физкульт' +  '\u000A' +  '3. Укр. язык' +  '\u000A' +  '4. Матем' +  '\u000A' +  '5. Искуство', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(WednesdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
   case 'Четверг':
         var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
 
-        sayText('1. Матем' +  '\u000A' +  '2. Плаванье' +  '\u000A' +  '3. Труд' +  '\u000A' +  '4. Англ. яз.' +  '\u000A' +  '5. Укр. мова', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(ThersdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
   case 'Пятница':
         var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
 
-        sayText('1. Я исслед. мир' +  '\u000A' +  '2. Матем' +  '\u000A' +  '3. Англ. яз.' +  '\u000A' +  '4. Обуч. грам.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(FridayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
     default:
@@ -462,7 +514,7 @@ function initializeGlobalParametersIfNeeded() {
   var parametersSheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
 
   // Fetch the range of cells B2:B10
-  var parametersDataRange = parametersSheet.getRange(2, 1, 9, 2); // Skip header row; Read parameter rows
+  var parametersDataRange = parametersSheet.getRange(2, 1, 14, 2); // Skip header row; Read parameter rows
 
   // Fetch cell value for each row in the range.
   var parametersData = parametersDataRange.getValues()
@@ -472,7 +524,7 @@ function initializeGlobalParametersIfNeeded() {
   gWelcomeMessage = parametersData[3][1];
   gWelcomeStartButton = parametersData[4][1];
   gEndMessage = parametersData[5][1];
-  gDoNotUnderstandMessage =  parametersData[6][1];
+  gDoNotUnderstandMessage = parametersData[6][1];
   gShouldUseRandomColors = parametersData[7][1];
   gDefaultKeyboardColor = parametersData[8][1];
   MondayRaspisanie = parametersData[9][1];
