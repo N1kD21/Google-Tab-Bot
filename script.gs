@@ -253,7 +253,7 @@ function createKeyboard(values) {
 function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) {
 
   var answerString = extractTextFromMessage(postData);
-/*
+
   var tablicaRaspisanie = SpreadsheetApp.getActiveSpreadsheet();
 
   var raspisanieSheet = tablicaRaspisanie.getSheetByName(RASPISANIE_SHEET_NAME);
@@ -302,22 +302,21 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
   MonUroki[2] = MonUrok3;
   MonUroki[3] = MonUrok4;
   MonUroki[4] = MonUrok5;
-  
+
   var srtoka = raspisData.toString();
- */ 
   switch (answerString) {
   case 'Понедельник':
-/*      
+/*
         sayText(srtoka, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         for (var i = 0; i < MonUroki.length; i++) {
           sayText(MonUroki[i], getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         }
         var didHandle = true;
         return didHandle;
-        */ 
+        */
         var keyboardObject = createKeyboard(['Понедельник','Вторник','Среда','Четверг','Пятница']);
 
-        sayText('1. Укр. мова.' +  '\u000A' +  '2. Физкультура' +  '\u000A' +  '3. Я исслед. мир.' +  '\u000A' +  '4. Обуч. гр.' +  '\u000A' +  '5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText('1.' + MonUrok1 +  '\u000A' +  '2.' + MonUrok2 +  '\u000A' +  '3.' + MonUrok3 +  '\u000A' +  '4.' + MonUrok4 +  '\u000A' +  '5.' + MonUrok5, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
     case 'Вторник':
