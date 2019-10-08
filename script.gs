@@ -470,11 +470,16 @@ function initializeGlobalParametersIfNeeded() {
   gBotName = parametersData[1][1];
   gBotAvatar = parametersData[2][1];
   gWelcomeMessage = parametersData[3][1];
-  MondayRaspisanie = parametersData[4][1];
-  TuesdayRaspisanie = parametersData[5][1];
-  WednesdayRaspisanie = parametersData[6][1];
-  ThersdayRaspisanie = parametersData[7][1];
-  FridayRaspisanie = parametersData[8][1];
+  gWelcomeStartButton = parametersData[4][1];
+  gEndMessage = parametersData[5][1];
+  gDoNotUnderstandMessage =  parametersData[6][1];
+  gShouldUseRandomColors = parametersData[7][1];
+  gDefaultKeyboardColor = parametersData[8][1];
+  MondayRaspisanie = parametersData[9][1];
+  TuesdayRaspisanie = parametersData[10][1];
+  WednesdayRaspisanie = parametersData[11][1];
+  ThersdayRaspisanie = parametersData[12][1];
+  FridayRaspisanie = parametersData[13][1];
 }
 
 // ---- Post/Get handlers ----
