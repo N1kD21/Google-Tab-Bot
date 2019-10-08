@@ -16,21 +16,21 @@ var KEYBOARD_DEFAULT_FONT_COLOR = '#FFFFFF';
 
 var KeyboardGenerator = function() {
   this.elements = [];
-
+ 
   this.randomColor = function () {
-
+    
     var hexValues = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e'];
     var randomColor = '#';
-
+    
     for ( var i = 0; i < 6; i++ ) {
       var x = Math.round( Math.random() * 14 );
       var y = hexValues[x];
       randomColor += y;
     }
-
+    
     return randomColor;
   }
-
+  
   this.elementToKeyboard = function(text, backgroundColor, fontColor) {
 	return [{
                 'Columns': '6',
@@ -44,14 +44,14 @@ var KeyboardGenerator = function() {
                 'TextSize': 'large'
             }];
   }
-
+  
   this.addElement = function(text, backgroundColor, fontColor) {
-    var addedElements = this.elementToKeyboard(text, backgroundColor || this.randomColor(),
+    var addedElements = this.elementToKeyboard(text, backgroundColor || this.randomColor(), 
         fontColor || KEYBOARD_DEFAULT_FONT_COLOR);
 
     this.elements = this.elements.concat(addedElements);
   }
-
+  
   this.build = function() {
     return {
 		'Type': 'keyboard',
