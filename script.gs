@@ -15,6 +15,7 @@
 // Constants
 var RASPISANIE_SHEET_NAME = 'raspisanie';
 var PARAMETERS_SHEET_NAME = 'parameters';
+var TOKENS_SHEET_NAME = 'tokens';
 var QUESTIONS_SHEET_NAME = 'questions';
 var ANSWERS_SHEET_NAME = 'answers';
 var SURVEY_STARTED_STATE_TYPE = 'started';
@@ -26,12 +27,13 @@ var gDidFillParameters = false;
 var gAccessToken = 'Your access token value from the parameters sheet';
 var gBotName = 'Your bot name from the parameters sheet';
 var gBotAvatar = 'Your bot avatar url from the parameters sheet';
-var gWelcomeMessage = 'Your welcome message from the parameters sheet';
+var gWelcomeMessage = 'Добро пожаловать. Этот бот предоставляет расписание на выбранный день.';
 var gWelcomeStartButton = 'Your welcome start button from the parameters sheet';
 var gEndMessage = 'Your end message from the parameters sheet';
 var gDoNotUnderstandMessage = 'Your do not understand input message from the parameters sheet';
 var gShouldUseRandomColors = false;
 var gDefaultKeyboardColor = 'Your default keyboard option color from the parameters sheet';
+var gMessageDefault = 'Этот бот предоставляет расписание при выборе дня недели на клавиатуре или при введении слов Понедельник, Вторник, Среда, Четверг, Пятница'
 var MondayRaspisanie = 'Понедельник';
 var TuesdayRaspisanie = 'Вторник';
 var WednesdayRaspisanie = 'Среда';
@@ -43,6 +45,43 @@ var WednesdayNazwa;
 var ThersdayNazwa;
 var FridayNazwa;
 // ---- Input validation methods ----
+
+function listNext10Events( ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject) {
+//  sayText('49. Test', ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+  var calendarId = 'sd3c4kcg1aj08rhst645i1pvh4@group.calendar.google.com';
+  var now = new Date();
+  var events = Calendar.Events.list(calendarId, {
+    timeMin: now.toISOString(),
+    singleEvents: true,
+    orderBy: 'startTime',
+    maxResults: 10
+  });
+  if (events.items && events.items.length > 0) {
+    for (var i = 0; i < events.items.length; i++) {
+      var event = events.items[i];
+      if (event.start.date) {
+        // All-day event.
+        var start = new Date(event.start.date);
+//        Logger.log('%s (%s)', event.summary, start.toLocaleDateString());
+//        sayText('65. ' + event.summary, ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+//        sayText('66. ' + start.toLocaleString(), ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+      } else {
+        var start = new Date(event.start.dateTime);
+//        sayText('69. ' + event.summary, ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+//        sayText('70. ' + start.toLocaleString(), ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+//        sayText('71. ' + event, ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+
+        
+//        Logger.log('%s (%s)', event.summary, start.toLocaleString());
+      }
+    }
+  } else {
+//    Logger.log('No events found.');
+//      sayText('No events found.', ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+
+  }
+}
+
 
 function isEvent(postData, event) {
   return (postData.event == event);
@@ -328,41 +367,46 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
 
 //        sayText('1. Укр. мова.' +  '\u000A' +  '2. Физкультура' +  '\u000A' +  '3. Я исслед. мир.' +  '\u000A' +  '4. Обуч. гр.' +  '\u000A' +  '5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         sayText(MondayNazwa + '\u000A' + MondayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-
+        listNext10Events( getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
-    case 'Вторник':
-    var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
+      break;
+  case 'Вторник':
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
         sayText(TuesdayNazwa + '\u000A' + TuesdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
+      break;
   case 'Среда':
   var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
         sayText(WednesdayNazwa + '\u000A' + WednesdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
+      break;
   case 'Четверг':
   var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
         sayText(ThersdayNazwa + '\u000A' + ThersdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
+      break;
   case 'Пятница':
   var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
         sayText(FridayNazwa + '\u000A' + FridayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
+      break;
     default:
- /*
-      sayText('1 - Понедельник 2 - Вторник 3 - Среда 4 - Четверг 5 - Пятница', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+      var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
+      sayText(gMessageDefault, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
- */
 
 
+/*
     if (!questionRow || !postData || questionIndex == undefined || userAnswerRow == undefined) return false;
 
     var didHandle = false;
@@ -383,6 +427,8 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
     }
 
     return didHandle;
+      
+*/      
   }
 
 
@@ -523,7 +569,7 @@ function initializeGlobalParametersIfNeeded() {
 
   // Fetch cell value for each row in the range.
   var parametersData = parametersDataRange.getValues()
-  gAccessToken = parametersData[0][1];
+//  gAccessToken = parametersData[0][1];
   gBotName = parametersData[1][1];
   gBotAvatar = parametersData[2][1];
   gWelcomeMessage = parametersData[3][1];
@@ -547,6 +593,18 @@ function initializeGlobalParametersIfNeeded() {
   var WednesdayNazwaString = WednesdayNazwa.toString();
   var ThersdayNazwaString = ThersdayNazwa.toString();
   var FridayNazwaString = FridayNazwa.toString();
+  
+  
+  var ssToken = SpreadsheetApp.getActiveSpreadsheet();
+
+  var tokensSheet = ssToken.getSheetByName(TOKENS_SHEET_NAME);
+
+  // Fetch the range of cells B2:B10
+  var tokensDataRange = tokensSheet.getRange(2, 1, 2, 2); // Skip header row; Read parameter rows
+
+  // Fetch cell value for each row in the range.
+  var tokenssData = tokensDataRange.getValues()
+  gAccessToken = tokenssData[0][1];
 }
 
 // ---- Post/Get handlers ----
