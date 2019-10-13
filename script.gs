@@ -44,29 +44,6 @@ var TuesdayNazwa;
 var WednesdayNazwa;
 var ThersdayNazwa;
 var FridayNazwa;
-var MonUrok1;
-var MonUrok2;
-var MonUrok3;
-var MonUrok4;
-var MonUrok5;
-var TueUrok1;
-var TueUrok2;
-var TueUrok3;
-var TueUrok4;
-var WenUrok1;
-var WenUrok2;
-var WenUrok3;
-var WenUrok4;
-var WenUrok5;
-var TheUrok1;
-var TheUrok2;
-var TheUrok3;
-var TheUrok4;
-var TheUrok5;
-var FriUrok1;
-var FriUrok2;
-var FriUrok3;
-var FriUrok4;
 // ---- Input validation methods ----
 
 function listNext10Events( ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject) {
@@ -94,7 +71,7 @@ function listNext10Events( ResultgetSenderId, ResultgAccessToken, ResultgBotName
 //        sayText('70. ' + start.toLocaleString(), ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
 //        sayText('71. ' + event, ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
 
-
+        
 //        Logger.log('%s (%s)', event.summary, start.toLocaleString());
       }
     }
@@ -389,13 +366,8 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
         var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
 //        sayText('1. Укр. мова.' +  '\u000A' +  '2. Физкультура' +  '\u000A' +  '3. Я исслед. мир.' +  '\u000A' +  '4. Обуч. гр.' +  '\u000A' +  '5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-<<<<<<< HEAD
-        sayText(MondayNazwa + '\u000A' + MonUrok1.toString() + '\u000A' + MonUrok2.toString() + '\u000A' + MonUrok3.toString() + '\u000A' + MonUrok4.toString() + '\u000A' + MonUrok5.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-
-=======
         sayText(MondayNazwa + '\u000A' + MondayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         listNext10Events( getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
->>>>>>> 68aae51b16ddf1555998672f1b2afcc0e6a7475a
         var didHandle = true;
         return didHandle;
       break;
@@ -455,8 +427,8 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
     }
 
     return didHandle;
-
-*/
+      
+*/      
   }
 
 
@@ -588,7 +560,7 @@ function initializeGlobalParametersIfNeeded() {
   if (gDidFillParameters) return;
   gDidFillParameters = true;
 
-  var ssParametrs = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
 
   var parametersSheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
 
@@ -606,13 +578,11 @@ function initializeGlobalParametersIfNeeded() {
   gDoNotUnderstandMessage = parametersData[6][1];
   gShouldUseRandomColors = parametersData[7][1];
   gDefaultKeyboardColor = parametersData[8][1];
-/*
   MondayRaspisanie = parametersData[9][1];
   TuesdayRaspisanie = parametersData[10][1];
   WednesdayRaspisanie = parametersData[11][1];
   ThersdayRaspisanie = parametersData[12][1];
   FridayRaspisanie = parametersData[13][1];
-*/
   MondayNazwa = parametersData[9][0];
   TuesdayNazwa = parametersData[10][0];
   WednesdayNazwa = parametersData[11][0];
@@ -623,47 +593,8 @@ function initializeGlobalParametersIfNeeded() {
   var WednesdayNazwaString = WednesdayNazwa.toString();
   var ThersdayNazwaString = ThersdayNazwa.toString();
   var FridayNazwaString = FridayNazwa.toString();
-<<<<<<< HEAD
-
-
-  var ssRaspisanie = SpreadsheetApp.getActiveSpreadsheet();
-
-  var raspisanieSheet = ssRaspisanie.getSheetByName(RASPISANIE_SHEET_NAME);
-
-  // Fetch the range of cells B2:B10
-  var raspisanieDataRange = raspisanieSheet.getRange(2, 1, 24, 2); // Skip header row; Read parameter rows
-
-  // Fetch cell value for each row in the range.
-  var raspisData = raspisanieDataRange.getValues()
-
-  MonUrok1 = raspisData[0][1];
-  MonUrok2 = raspisData[1][1];
-  MonUrok3 = raspisData[2][1];
-  MonUrok4 = raspisData[3][1];
-  MonUrok5 = raspisData[4][1];
-  TueUrok1 = raspisData[5][1];
-  TueUrok2 = raspisData[6][1];
-  TueUrok3 = raspisData[7][1];
-  TueUrok4 = raspisData[8][1];
-  WenUrok1 = raspisData[9][1];
-  WenUrok2 = raspisData[10][1];
-  WenUrok3 = raspisData[11][1];
-  WenUrok4 = raspisData[12][1];
-  WenUrok5 = raspisData[13][1];
-  TheUrok1 = raspisData[14][1];
-  TheUrok2 = raspisData[15][1];
-  TheUrok3 = raspisData[16][1];
-  TheUrok4 = raspisData[17][1];
-  TheUrok4 = raspisData[18][1];
-  FriUrok1 = raspisData[19][1];
-  FriUrok2 = raspisData[20][1];
-  FriUrok3 = raspisData[21][1];
-  FriUrok4 = raspisData[22][1];
-
-
-=======
-
-
+  
+  
   var ssToken = SpreadsheetApp.getActiveSpreadsheet();
 
   var tokensSheet = ssToken.getSheetByName(TOKENS_SHEET_NAME);
@@ -674,7 +605,6 @@ function initializeGlobalParametersIfNeeded() {
   // Fetch cell value for each row in the range.
   var tokenssData = tokensDataRange.getValues()
   gAccessToken = tokenssData[0][1];
->>>>>>> 68aae51b16ddf1555998672f1b2afcc0e6a7475a
 }
 
 // ---- Post/Get handlers ----
