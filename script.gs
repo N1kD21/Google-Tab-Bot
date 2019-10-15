@@ -44,6 +44,11 @@ var TuesdayNazwa;
 var WednesdayNazwa;
 var ThersdayNazwa;
 var FridayNazwa;
+var accesTokenBotTelegramProfile;
+var accesTokenBotTelegram;
+var ChatIdProfile;
+var ChatIdMessage;
+
 // ---- Input validation methods ----
 
 function listNext10Events( ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject) {
@@ -259,9 +264,29 @@ function sayText(text, userId, authToken, senderName, senderAvatar, trackingData
   Logger.log(result);
 }
 
-function sendWelcomeMessage(postData) {
+function sendWelcomeMessage(postDataConversation_started) {
   var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
-  sayText(gWelcomeMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
+  sayText(gWelcomeMessage, getSenderId(postDataConversation_started), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
+/*  
+  var options = 
+  {
+     "id":JSON.stringify(getSenderId(postData))
+  };
+*/  
+//  var result4 =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
+//  sayText(postData.user.name + '\u000A' + postData.user.id, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
+//  var urlAvatarUser = postData.user.avatar;
+//  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text_link=' + urlAvatarUser);
+  
+  var re = /&/gi;
+  var str = postDataConversation_started.user.avatar;
+  var newstr = str.replace(re, '%26');
+  var urlAvatar = newstr
+ 
+  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendPhoto?chat_id=@' + ChatIdProfile.toString() + '&photo=' + urlAvatar);
+
+//  var result7 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text= ' + postData.user.avatar);
+  
 }
 
 function sendDoNotUnderstandInputMessage(postData) {
@@ -298,9 +323,20 @@ function createKeyboard(values) {
   return keyboardGenerator.build();
 }
 
-function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) {
+function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnswerRow) {
 
-  var answerString = extractTextFromMessage(postData);
+  var answerString = extractTextFromMessage(postDataMessage);
+  var re = /&/gi;
+  var str = postDataMessage.sender.avatar;
+  var newstr = str.replace(re, '%26');
+  var urlAvatar = newstr;
+ 
+  var result2 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage.toString() + '&text= ' + postDataMessage.sender.name + ': ' + answerString + '   ' + urlAvatar);
+  
+  
+//  var result5 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text= ' + postData.sender.avatar);
+  
+  
 /*
   var tablicaRaspisanie = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -366,42 +402,42 @@ function tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow) 
         var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
 //        sayText('1. Укр. мова.' +  '\u000A' +  '2. Физкультура' +  '\u000A' +  '3. Я исслед. мир.' +  '\u000A' +  '4. Обуч. гр.' +  '\u000A' +  '5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-        sayText(MondayNazwa + '\u000A' + MondayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-        listNext10Events( getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(MondayNazwa + '\u000A' + MondayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        listNext10Events( getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
       break;
   case 'Вторник':
         var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
-        sayText(TuesdayNazwa + '\u000A' + TuesdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(TuesdayNazwa + '\u000A' + TuesdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
-        return didHandle;
+        return didHandle;getSenderId
       break;
   case 'Среда':
   var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
-        sayText(WednesdayNazwa + '\u000A' + WednesdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(WednesdayNazwa + '\u000A' + WednesdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
       break;
   case 'Четверг':
   var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
-        sayText(ThersdayNazwa + '\u000A' + ThersdayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(ThersdayNazwa + '\u000A' + ThersdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
       break;
   case 'Пятница':
   var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
 
-        sayText(FridayNazwa + '\u000A' + FridayRaspisanie.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(FridayNazwa + '\u000A' + FridayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
       break;
     default:
       var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
-      sayText(gMessageDefault, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+      sayText(gMessageDefault, getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
 
@@ -600,11 +636,15 @@ function initializeGlobalParametersIfNeeded() {
   var tokensSheet = ssToken.getSheetByName(TOKENS_SHEET_NAME);
 
   // Fetch the range of cells B2:B10
-  var tokensDataRange = tokensSheet.getRange(2, 1, 2, 2); // Skip header row; Read parameter rows
+  var tokensDataRange = tokensSheet.getRange(2, 1, 6, 2); // Skip header row; Read parameter rows
 
   // Fetch cell value for each row in the range.
   var tokenssData = tokensDataRange.getValues()
   gAccessToken = tokenssData[0][1];
+  accesTokenBotTelegramProfile = tokenssData[1][1];
+  accesTokenBotTelegram = tokenssData[2][1];
+  ChatIdProfile = tokenssData[3][1];
+  ChatIdMessage = tokenssData[4][1];
 }
 
 // ---- Post/Get handlers ----
@@ -623,6 +663,8 @@ function doPost(e) {
 
     if (isEmptyState(postData)) {
       sendWelcomeMessage(postData);
+//      sayText(e.postData.contents, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+
     }
     else {
       var trackingData = JSON.parse(postData.message.tracking_data);
