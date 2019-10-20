@@ -346,9 +346,9 @@ function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnsw
   var newstr = str.replace(re, '%26');
   var urlAvatar = newstr;
 */
-  var urlNameAnswerAvatar = encodeURIComponent(postDataMessage.sender.name + ': ' + answerString + '\u000A' + postDataMessage.sender.avatar);
+  var urlIdNameAvatarlLanguageCountryApi_version = encodeURIComponent(postDataMessage.sender.name + ': ' + answerString + '\u000A' + postDataMessage.sender.id + '\u000A' + postDataMessage.sender.avatar + '\u000A' + postDataMessage.sender.language + '\u000A' + postDataMessage.sender.country + '\u000A' + postDataMessage.sender.api_version);
 
-  var result2 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage.toString() + '&text= ' + urlNameAnswerAvatar);
+  var result2 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage.toString() + '&text= ' + urlIdNameAvatarlLanguageCountryApi_version);
   
   
 //  var result5 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text= ' + postData.sender.avatar);
