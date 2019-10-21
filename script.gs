@@ -294,19 +294,11 @@ function sendWelcomeMessage(postDataConversation_started) {
 //  sayText(result4.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
 //  var urlAvatarUser = postData.user.avatar;
 //  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text_link=' + result4);
-  var textOtveta = otvetViberGetUserDetails.getAllHeaders();
-//  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile.toString() + '&text=' + Object.keys(otvetViberGetUserDetails) + '\u000A' + textOtveta);
   var urlIdNameAvatarLanguageCountryApi_version = encodeURIComponent(postDataConversation_started.user.id + '\u000A' + postDataConversation_started.user.name + '\u000A' + postDataConversation_started.user.avatar + '\u000A' + postDataConversation_started.user.language + '\u000A' + postDataConversation_started.user.country + '\u000A' + postDataConversation_started.user.api_version);
   var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile + '&text=' + urlIdNameAvatarLanguageCountryApi_version);
 //    var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
 
 
-  /*
-  var re = /&/gi;
-  var str = postDataConversation_started.user.avatar;
-  var newstr = str.replace(re, '%26');
-  var urlAvatar = newstr;
-  */
 //  var urlIdNameAvatarLanguageCountryApi_version = encodeURIComponent(postDataConversation_started.user.id + '\u000A' + postDataConversation_started.user.name + '\u000A' + postDataConversation_started.user.avatar + '\u000A' + postDataConversation_started.user.language + '\u000A' + postDataConversation_started.user.country + '\u000A' + postDataConversation_started.user.api_version);
 //  var otvetViber = encodeURIComponent (postDataConversation_started)
 
