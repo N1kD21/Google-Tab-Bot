@@ -272,35 +272,46 @@ function sendWelcomeMessage(postDataConversation_started) {
       "id": getSenderId(postDataConversation_started)
   };
   var options = {
-    'method' : 'post',
+    'async': true,
+    'crossDomain': true,
+    'method': 'POST',
+    'headers': {
+      'X-Viber-Auth-Token': gAccessToken,
+      'content-type': 'application/json',
+      "id": getSenderId(postDataConversation_started)
+    },
     'contentType': 'application/json',
-  // Convert the JavaScript object to a JSON string.
     'payload' : JSON.stringify(data)
   };
   
-  var result4 =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
+  var otvetViberGetUserDetails =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
+  
+  var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
+  var VivodViberGetUserDetails =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile + '&text='+  urlViberOtvet);
+
 
 //  var result4 =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
 //  sayText(result4.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
 //  var urlAvatarUser = postData.user.avatar;
-//  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text_link=' + urlAvatarUser);
+//  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text_link=' + result4);
+  var textOtveta = otvetViberGetUserDetails.getAllHeaders();
+//  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile.toString() + '&text=' + Object.keys(otvetViberGetUserDetails) + '\u000A' + textOtveta);
+  var urlIdNameAvatarLanguageCountryApi_version = encodeURIComponent(postDataConversation_started.user.id + '\u000A' + postDataConversation_started.user.name + '\u000A' + postDataConversation_started.user.avatar + '\u000A' + postDataConversation_started.user.language + '\u000A' + postDataConversation_started.user.country + '\u000A' + postDataConversation_started.user.api_version);
+  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile + '&text=' + urlIdNameAvatarLanguageCountryApi_version);
+//    var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
+
+
   /*
   var re = /&/gi;
   var str = postDataConversation_started.user.avatar;
   var newstr = str.replace(re, '%26');
   var urlAvatar = newstr;
   */
-  var urlIdNameAvatarLanguageCountryApi_version = encodeURIComponent(postDataConversation_started.user.id + '\u000A' + postDataConversation_started.user.name + '\u000A' + postDataConversation_started.user.avatar + '\u000A' + postDataConversation_started.user.language + '\u000A' + postDataConversation_started.user.country + '\u000A' + postDataConversation_started.user.api_version);
+//  var urlIdNameAvatarLanguageCountryApi_version = encodeURIComponent(postDataConversation_started.user.id + '\u000A' + postDataConversation_started.user.name + '\u000A' + postDataConversation_started.user.avatar + '\u000A' + postDataConversation_started.user.language + '\u000A' + postDataConversation_started.user.country + '\u000A' + postDataConversation_started.user.api_version);
 //  var otvetViber = encodeURIComponent (postDataConversation_started)
 
-  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile.toString() + '&text=' + urlIdNameAvatarLanguageCountryApi_version);
-  
- // var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendPhoto?chat_id=@' + ChatIdProfile.toString() + '&photo=' + urlAvatar);
-  
-  
+//  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile.toString() + '&text=' + urlIdNameAvatarLanguageCountryApi_version);
 
-//  var result7 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text= ' + postData.user.avatar);
-  
 }
 
 function sendDoNotUnderstandInputMessage(postData) {
@@ -338,7 +349,37 @@ function createKeyboard(values) {
 }
 
 function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnswerRow) {
+    
+  var data = {
+      "id": getSenderId(postDataMessage)
+  };
+  var options = {
+    'async': true,
+    'crossDomain': true,
+    'method': 'POST',
+    'headers': {
+      'X-Viber-Auth-Token': gAccessToken,
+      'content-type': 'application/json',
+      "id": getSenderId(postDataMessage)
+    },
+    'contentType': 'application/json',
+    'payload' : JSON.stringify(data)
+  };
+  
+  var otvetViberGetUserDetails =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
+  
+  var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
+  var VivodViberGetUserDetails =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage + '&text='+  urlViberOtvet);
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
   var answerString = extractTextFromMessage(postDataMessage);
 /*
   var re = /&/gi;
@@ -348,7 +389,7 @@ function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnsw
 */
   var urlIdNameAvatarlLanguageCountryApi_version = encodeURIComponent(postDataMessage.sender.name + ': ' + answerString + '\u000A' + postDataMessage.sender.id + '\u000A' + postDataMessage.sender.avatar + '\u000A' + postDataMessage.sender.language + '\u000A' + postDataMessage.sender.country + '\u000A' + postDataMessage.sender.api_version);
 
-  var result2 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage.toString() + '&text= ' + urlIdNameAvatarlLanguageCountryApi_version);
+  var result2 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage + '&text= ' + urlIdNameAvatarlLanguageCountryApi_version);
   
   
 //  var result5 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text= ' + postData.sender.avatar);
