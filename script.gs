@@ -44,15 +44,17 @@ var TuesdayNazwa;
 var WednesdayNazwa;
 var ThersdayNazwa;
 var FridayNazwa;
+var ZvonkiRaspisanie;
+var ZvonkiNazwa;
 var accesTokenBotTelegramProfile;
 var accesTokenBotTelegram;
 var ChatIdProfile;
 var ChatIdMessage;
-
+var keyboardAssay = [MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]
 // ---- Input validation methods ----
 
 function listNext10Events( ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject) {
-//  sayText('49. Test', ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+  sayText('57. Test', ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
   var calendarId = 'sd3c4kcg1aj08rhst645i1pvh4@group.calendar.google.com';
   var now = new Date();
   var events = Calendar.Events.list(calendarId, {
@@ -68,15 +70,15 @@ function listNext10Events( ResultgetSenderId, ResultgAccessToken, ResultgBotName
         // All-day event.
         var start = new Date(event.start.date);
 //        Logger.log('%s (%s)', event.summary, start.toLocaleDateString());
-//        sayText('65. ' + event.summary, ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
-//        sayText('66. ' + start.toLocaleString(), ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+        sayText('73. ' + event.summary, ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+        sayText('74. ' + start.toLocaleString(), ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
       } else {
         var start = new Date(event.start.dateTime);
-//        sayText('69. ' + event.summary, ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
-//        sayText('70. ' + start.toLocaleString(), ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
-//        sayText('71. ' + event, ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+        sayText('77. ' + event.summary, ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+        sayText('78. ' + start.toLocaleString(), ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
+        sayText('79. ' + event, ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
 
-        
+
 //        Logger.log('%s (%s)', event.summary, start.toLocaleString());
       }
     }
@@ -85,6 +87,9 @@ function listNext10Events( ResultgetSenderId, ResultgAccessToken, ResultgBotName
 //      sayText('No events found.', ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
 
   }
+  var result22 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage + '&text= ' + now);
+
+  return now;
 }
 
 
@@ -267,7 +272,7 @@ function sayText(text, userId, authToken, senderName, senderAvatar, trackingData
 function sendWelcomeMessage(postDataConversation_started) {
   var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
   sayText(gWelcomeMessage, getSenderId(postDataConversation_started), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
-  
+
   var data = {
       "id": getSenderId(postDataConversation_started)
   };
@@ -283,9 +288,9 @@ function sendWelcomeMessage(postDataConversation_started) {
     'contentType': 'application/json',
     'payload' : JSON.stringify(data)
   };
-  
+
   var otvetViberGetUserDetails =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
-  
+
   var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
   var VivodViberGetUserDetails =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile + '&text='+  urlViberOtvet);
 
@@ -294,11 +299,19 @@ function sendWelcomeMessage(postDataConversation_started) {
 //  sayText(result4.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
 //  var urlAvatarUser = postData.user.avatar;
 //  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text_link=' + result4);
+  var textOtveta = otvetViberGetUserDetails.getAllHeaders();
+//  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile.toString() + '&text=' + Object.keys(otvetViberGetUserDetails) + '\u000A' + textOtveta);
   var urlIdNameAvatarLanguageCountryApi_version = encodeURIComponent(postDataConversation_started.user.id + '\u000A' + postDataConversation_started.user.name + '\u000A' + postDataConversation_started.user.avatar + '\u000A' + postDataConversation_started.user.language + '\u000A' + postDataConversation_started.user.country + '\u000A' + postDataConversation_started.user.api_version);
   var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile + '&text=' + urlIdNameAvatarLanguageCountryApi_version);
 //    var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
 
 
+  /*
+  var re = /&/gi;
+  var str = postDataConversation_started.user.avatar;
+  var newstr = str.replace(re, '%26');
+  var urlAvatar = newstr;
+  */
 //  var urlIdNameAvatarLanguageCountryApi_version = encodeURIComponent(postDataConversation_started.user.id + '\u000A' + postDataConversation_started.user.name + '\u000A' + postDataConversation_started.user.avatar + '\u000A' + postDataConversation_started.user.language + '\u000A' + postDataConversation_started.user.country + '\u000A' + postDataConversation_started.user.api_version);
 //  var otvetViber = encodeURIComponent (postDataConversation_started)
 
@@ -341,7 +354,7 @@ function createKeyboard(values) {
 }
 
 function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnswerRow) {
-    
+
   var data = {
       "id": getSenderId(postDataMessage)
   };
@@ -357,21 +370,21 @@ function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnsw
     'contentType': 'application/json',
     'payload' : JSON.stringify(data)
   };
-  
-  var otvetViberGetUserDetails =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
-  
-  var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
-  var VivodViberGetUserDetails =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage + '&text='+  urlViberOtvet);
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  var otvetViberGetUserDetails =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
+
+  var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
+//  var VivodViberGetUserDetails =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage + '&text='+  urlViberOtvet);
+
+
+
+
+
+
+
+
+
+
   var answerString = extractTextFromMessage(postDataMessage);
 /*
   var re = /&/gi;
@@ -379,14 +392,14 @@ function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnsw
   var newstr = str.replace(re, '%26');
   var urlAvatar = newstr;
 */
-  var urlIdNameAvatarlLanguageCountryApi_version = encodeURIComponent(postDataMessage.sender.name + ': ' + answerString + '\u000A' + postDataMessage.sender.id + '\u000A' + postDataMessage.sender.avatar + '\u000A' + postDataMessage.sender.language + '\u000A' + postDataMessage.sender.country + '\u000A' + postDataMessage.sender.api_version);
+  var urlIdNameAvatarlLanguageCountryApi_version = encodeURIComponent(postDataMessage.sender.name + ': ' + answerString + '\u000A' + postDataMessage.sender.id);
 
   var result2 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage + '&text= ' + urlIdNameAvatarlLanguageCountryApi_version);
-  
-  
+
+
 //  var result5 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text= ' + postData.sender.avatar);
-  
-  
+
+
 /*
   var tablicaRaspisanie = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -439,116 +452,117 @@ function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnsw
 
   var srtoka = raspisData.toString();
  */
+
+
+
   switch (answerString) {
   case 'Понедельник':
-/*
-        sayText(srtoka, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-        for (var i = 0; i < MonUroki.length; i++) {
-          sayText(MonUroki[i], getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-        }
-        var didHandle = true;
-        return didHandle;
-        */
-        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
+      if (new Date().getDay().toString() == 1) {
+        var td7 = Utilities.formatDate(new Date(), "GMT", "dd.MM.yyyy");
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
 
-//        sayText('1. Укр. мова.' +  '\u000A' +  '2. Физкультура' +  '\u000A' +  '3. Я исслед. мир.' +  '\u000A' +  '4. Обуч. гр.' +  '\u000A' +  '5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-        sayText(MondayNazwa + '\u000A' + MondayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-        listNext10Events( getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(MondayNazwa + '\u000A' + td7 + '\u000A' + MondayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+    //    sayText('https://www.youtube.com/watch?v=iPW75ZO4pIA', getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
+      } else {
+        var td7 = Utilities.formatDate(new Date(), "GMT", new Date().getDate() + 7 + ".MM.yyyy");
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
+
+        sayText(MondayNazwa + '\u000A' + td7 + '\u000A' + MondayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+    //    sayText('https://www.youtube.com/watch?v=iPW75ZO4pIA', getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+
+        var didHandle = true;
+        return didHandle;
+      }
       break;
   case 'Вторник':
-        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
+      if (new Date().getDay().toString() == 2) {
+        var td7 = Utilities.formatDate(new Date(), "GMT", "dd.MM.yyyy");
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
 
-        sayText(TuesdayNazwa + '\u000A' + TuesdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(TuesdayNazwa + '\u000A' + td7 + '\u000A' + TuesdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
-        return didHandle;getSenderId
+        return didHandle;
+      } else {
+        var td7 = Utilities.formatDate(new Date(), "GMT", new Date().getDate() + 7 + ".MM.yyyy");
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
+
+        sayText(TuesdayNazwa + '\u000A' + td7 + '\u000A' + TuesdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        var didHandle = true;
+        return didHandle;
+      }
       break;
   case 'Среда':
-  var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
+      if (new Date().getDay().toString() == 3) {
+        var td7 = Utilities.formatDate(new Date(), "GMT", "dd.MM.yyyy");
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
 
-        sayText(WednesdayNazwa + '\u000A' + WednesdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(WednesdayNazwa + '\u000A' + td7 + '\u000A' + WednesdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
-      break;
+        break;
+      } else {
+        var td7 = Utilities.formatDate(new Date(), "GMT", new Date().getDate() + 7 + ".MM.yyyy");
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
+
+        sayText(WednesdayNazwa + '\u000A' + td7 + '\u000A' + WednesdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        var didHandle = true;
+        return didHandle;
+        break;
+      }
+
   case 'Четверг':
-  var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
+      if (new Date().getDay().toString() == 4) {
+        var td7 = Utilities.formatDate(new Date(), "GMT", "dd.MM.yyyy");
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
 
-        sayText(ThersdayNazwa + '\u000A' + ThersdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(ThersdayNazwa + '\u000A' + td7 + '\u000A' + ThersdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
-      break;
+        break;
+      } else {
+        var td7 = Utilities.formatDate(new Date(), "GMT", new Date().getDate() + 7 + ".MM.yyyy");
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
+
+        sayText(ThersdayNazwa + '\u000A' + td7 + '\u000A' + ThersdayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        var didHandle = true;
+        return didHandle;
+        break;
+      }
   case 'Пятница':
-  var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
+      if (new Date().getDay().toString() == 5) {
+        var td7 = Utilities.formatDate(new Date(), "GMT", "dd.MM.yyyy");
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
 
-        sayText(FridayNazwa + '\u000A' + FridayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        sayText(FridayNazwa + '\u000A' + td7 + '\u000A' + FridayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
+        break;
+      } else {
+        var td7 = Utilities.formatDate(new Date(), "GMT", new Date().getDate() + 7 + ".MM.yyyy");
+        var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
+
+        sayText(FridayNazwa + '\u000A' + td7 + '\u000A' + FridayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+        var didHandle = true;
+        return didHandle;
+        break;
+        }
+  case 'Звонки':
+      var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
+
+      sayText(ZvonkiNazwa + '\u000A' + td7 + '\u000A' + ZvonkiRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
+      var didHandle = true;
+      return didHandle;
       break;
     default:
-      var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
+      var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
       sayText(gMessageDefault, getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
 
-
-/*
-    if (!questionRow || !postData || questionIndex == undefined || userAnswerRow == undefined) return false;
-
-    var didHandle = false;
-
-    var questionType = questionRow[0];
-    var questionMessage = questionRow[1];
-
-    if (questionType === 'keyboard') {
-      var questionExtras = questionRow[2];
-      var keyboardFields = questionExtras.split(';');
-      var keyboardObject = createKeyboard(keyboardFields);
-      sayText(questionMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-      didHandle = true;
-    }
-    else if (questionType === 'text' || questionType === 'range') {
-      sayText(questionMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow));
-      didHandle = true;
-    }
-
-    return didHandle;
-      
-*/      
   }
 
-
-
-/*
-  if (answerString == 'Pn') {
-        sayText('1. Укр. мова 2. Физкультура 3. Я исслед. мир 4. Обуч. гр. 5. Англ. яз.', getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-        var didHandle = true;
-        return didHandle;
-  }
-  else {
-
-    if (!questionRow || !postData || questionIndex == undefined || userAnswerRow == undefined) return false;
-
-    var didHandle = false;
-
-    var questionType = questionRow[0];
-    var questionMessage = questionRow[1];
-
-    if (questionType === 'keyboard') {
-      var questionExtras = questionRow[2];
-      var keyboardFields = questionExtras.split(';');
-      var keyboardObject = createKeyboard(keyboardFields);
-      sayText(questionMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-      didHandle = true;
-    }
-    else if (questionType === 'text' || questionType === 'range') {
-      sayText(questionMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow));
-      didHandle = true;
-    }
-
-    return didHandle;
-  }
-*/
 }
 
 function isValidAnswer(postData, questionRow) {
@@ -651,7 +665,7 @@ function initializeGlobalParametersIfNeeded() {
   var parametersSheet = ss.getSheetByName(PARAMETERS_SHEET_NAME);
 
   // Fetch the range of cells B2:B10
-  var parametersDataRange = parametersSheet.getRange(2, 1, 14, 2); // Skip header row; Read parameter rows
+  var parametersDataRange = parametersSheet.getRange(2, 1, 15, 2); // Skip header row; Read parameter rows
 
   // Fetch cell value for each row in the range.
   var parametersData = parametersDataRange.getValues()
@@ -669,18 +683,15 @@ function initializeGlobalParametersIfNeeded() {
   WednesdayRaspisanie = parametersData[11][1];
   ThersdayRaspisanie = parametersData[12][1];
   FridayRaspisanie = parametersData[13][1];
+  ZvonkiRaspisanie = parametersData[14][1];
   MondayNazwa = parametersData[9][0];
   TuesdayNazwa = parametersData[10][0];
   WednesdayNazwa = parametersData[11][0];
   ThersdayNazwa = parametersData[12][0];
   FridayNazwa = parametersData[13][0];
-  var MondayNazwaString = MondayNazwa.toString();
-  var TuesdayNazwaString = TuesdayNazwa.toString();
-  var WednesdayNazwaString = WednesdayNazwa.toString();
-  var ThersdayNazwaString = ThersdayNazwa.toString();
-  var FridayNazwaString = FridayNazwa.toString();
-  
-  
+  ZvonkiNazwa = parametersData[14][0];
+
+
   var ssToken = SpreadsheetApp.getActiveSpreadsheet();
 
   var tokensSheet = ssToken.getSheetByName(TOKENS_SHEET_NAME);
