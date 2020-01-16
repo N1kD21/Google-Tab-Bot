@@ -46,13 +46,15 @@ var ThersdayNazwa;
 var FridayNazwa;
 var ZvonkiRaspisanie;
 var ZvonkiNazwa;
-var accesTokenBotTelegramProfile;
-var accesTokenBotTelegram;
-var ChatIdProfile;
-var ChatIdMessage;
+var accesTokenBotTelegramProfileGetUserDetails;
+var accesTokenBotTelegramMessageUser;
+var ChatIdProfileGetUserDetails;
+var ChatIdMessageUser;
 var keyboardAssay = [MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]
 // ---- Input validation methods ----
 
+
+// Функция связаная с календарем
 function listNext10Events( ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject) {
   sayText('57. Test', ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
   var calendarId = 'sd3c4kcg1aj08rhst645i1pvh4@group.calendar.google.com';
@@ -87,10 +89,11 @@ function listNext10Events( ResultgetSenderId, ResultgAccessToken, ResultgBotName
 //      sayText('No events found.', ResultgetSenderId, ResultgAccessToken, ResultgBotName, ResultgBotAvatar, ResultstateInSurvey, ResultkeyboardObject);
 
   }
-  var result22 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage + '&text= ' + now);
+  var result22 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramMessageUser + '/sendMessage?chat_id=@' + ChatIdMessageUser + '&text= ' + now);
 
   return now;
 }
+
 
 
 function isEvent(postData, event) {
@@ -174,7 +177,6 @@ function getUserAnswerRowFromState(trackingData) {
 }
 
 // ---- Spreadsheet access methods ----
-
 function getQuestionByIndex(questionIndex) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -189,7 +191,6 @@ function getQuestionByIndex(questionIndex) {
 }
 
 function getAnswerIndexForUser(userId) {
-
   var doc     = SpreadsheetApp.getActiveSpreadsheet();
   var sheet   = doc.getSheetByName(ANSWERS_SHEET_NAME); // select the responses sheet
   var headerStartRowPosition = 2; // Skip header row.
@@ -198,7 +199,6 @@ function getAnswerIndexForUser(userId) {
   var userIdsValues = sheet.getRange(headerStartRowPosition, 1, sheet.getLastRow(), 1).getValues(); // Skip header row; Read all rows, first column
 
   var userAnswerRow = undefined;
-
   for (var i = 0; i < userIdsValues.length; i++) {
     if (!userIdsValues[i][0]) {
       break;
@@ -208,7 +208,6 @@ function getAnswerIndexForUser(userId) {
       break;
     }
   }
-
   // This is a new user. Get the new row!
   if (userAnswerRow == undefined) {
     userAnswerRow = sheet.getLastRow() + 1; // get the next row
@@ -218,7 +217,6 @@ function getAnswerIndexForUser(userId) {
     // Make sure the cell is updated right away in case the script is interrupted
     SpreadsheetApp.flush();
   }
-
   return userAnswerRow;
 }
 
@@ -235,7 +233,6 @@ function writeAnswer(userAnswerRow, questionIndex, answerString) {
 
 // ---- Send messages methods ----
 function sayText(text, userId, authToken, senderName, senderAvatar, trackingData, keyboard) {
-
   var data = {
     'type' : 'text',
     'text' : text,
@@ -246,11 +243,9 @@ function sayText(text, userId, authToken, senderName, senderAvatar, trackingData
     },
     'tracking_data': JSON.stringify(trackingData || {})
   };
-
   if (keyboard) {
     data.keyboard = keyboard;
   }
-
   var options = {
     'async': true,
     'crossDomain': true,
@@ -262,21 +257,20 @@ function sayText(text, userId, authToken, senderName, senderAvatar, trackingData
     },
    'payload' : JSON.stringify(data)
   }
-
   //Logger.log(options);
   var result =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/send_message', options);
-
   Logger.log(result);
 }
+
 
 function sendWelcomeMessage(postDataConversation_started) {
   var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa]);
   sayText(gWelcomeMessage, getSenderId(postDataConversation_started), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
-
-  var data = {
+  var GetUserDetailsString = '\u000A';
+  var dataConversation_started = {
       "id": getSenderId(postDataConversation_started)
   };
-  var options = {
+  var optionsConversation_started = {
     'async': true,
     'crossDomain': true,
     'method': 'POST',
@@ -286,38 +280,19 @@ function sendWelcomeMessage(postDataConversation_started) {
       "id": getSenderId(postDataConversation_started)
     },
     'contentType': 'application/json',
-    'payload' : JSON.stringify(data)
+    'payload' : JSON.stringify(dataConversation_started)
   };
 
-  var otvetViberGetUserDetails =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
+  var otvetViberGetUserDetails =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', optionsConversation_started);
+  var otvetViberGetUserDetailsJSON = JSON.parse(otvetViberGetUserDetails);
+  if (otvetViberGetUserDetailsJSON.status_message != 'maximum get user info requests exceeded.') {
+      GetUserDetailsString = '\u000A' + 'GetUserDetails \u000A' + otvetViberGetUserDetails;
+  }
 
-  var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
-  var VivodViberGetUserDetails =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile + '&text='+  urlViberOtvet);
-
-
-//  var result4 =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
-//  sayText(result4.toString(), getSenderId(postData), gAccessToken, gBotName, gBotAvatar, stateSurveyStarted(), keyboardObject);
-//  var urlAvatarUser = postData.user.avatar;
-//  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text_link=' + result4);
-  var textOtveta = otvetViberGetUserDetails.getAllHeaders();
-//  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile.toString() + '&text=' + Object.keys(otvetViberGetUserDetails) + '\u000A' + textOtveta);
-  var urlIdNameAvatarLanguageCountryApi_version = encodeURIComponent(postDataConversation_started.user.id + '\u000A' + postDataConversation_started.user.name + '\u000A' + postDataConversation_started.user.avatar + '\u000A' + postDataConversation_started.user.language + '\u000A' + postDataConversation_started.user.country + '\u000A' + postDataConversation_started.user.api_version);
-  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile + '&text=' + urlIdNameAvatarLanguageCountryApi_version);
-//    var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
-
-
-  /*
-  var re = /&/gi;
-  var str = postDataConversation_started.user.avatar;
-  var newstr = str.replace(re, '%26');
-  var urlAvatar = newstr;
-  */
-//  var urlIdNameAvatarLanguageCountryApi_version = encodeURIComponent(postDataConversation_started.user.id + '\u000A' + postDataConversation_started.user.name + '\u000A' + postDataConversation_started.user.avatar + '\u000A' + postDataConversation_started.user.language + '\u000A' + postDataConversation_started.user.country + '\u000A' + postDataConversation_started.user.api_version);
-//  var otvetViber = encodeURIComponent (postDataConversation_started)
-
-//  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@' + ChatIdProfile.toString() + '&text=' + urlIdNameAvatarLanguageCountryApi_version);
-
+  var urlIdNameAvatarLanguageCountryApi_version = encodeURIComponent('SendWelcomeMessage \u000A' + postDataConversation_started.user.id + '\u000A' + postDataConversation_started.user.name + '\u000A' + postDataConversation_started.user.avatar + '\u000A' + postDataConversation_started.user.language + '\u000A' + postDataConversation_started.user.country + '\u000A' + postDataConversation_started.user.api_version + GetUserDetailsString);
+  var result3 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfileGetUserDetails + '/sendMessage?chat_id=@' + ChatIdProfileGetUserDetails + '&text=' + urlIdNameAvatarLanguageCountryApi_version);
 }
+
 
 function sendDoNotUnderstandInputMessage(postData) {
   sayText(gDoNotUnderstandMessage, getSenderId(postData), gAccessToken, gBotName, gBotAvatar);
@@ -353,12 +328,12 @@ function createKeyboard(values) {
   return keyboardGenerator.build();
 }
 
-function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnswerRow) {
+function sendMessage(postDataMessage, questionRow, questionIndex, userAnswerRow) {
 
-  var data = {
+  var dataSendMessage = {
       "id": getSenderId(postDataMessage)
   };
-  var options = {
+  var optionsSendMessage = {
     'async': true,
     'crossDomain': true,
     'method': 'POST',
@@ -368,93 +343,22 @@ function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnsw
       "id": getSenderId(postDataMessage)
     },
     'contentType': 'application/json',
-    'payload' : JSON.stringify(data)
+    'payload' : JSON.stringify(dataSendMessage)
   };
+  // запрашиваю User Details у Вайбера
+  var otvetViberGetUserDetails =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', optionsSendMessage)
 
-  var otvetViberGetUserDetails =  UrlFetchApp.fetch('https://chatapi.viber.com/pa/get_user_details', options)
+  var otvetViberGetUserDetailsJSON = JSON.parse(otvetViberGetUserDetails);
+  var urlIdNameAvatarLanguageCountryApi_versionGetUserDetails = encodeURIComponent('GetUserDetails \u000A' + otvetViberGetUserDetails);
 
-  var urlViberOtvet = encodeURIComponent(Object.keys(otvetViberGetUserDetails) + '\u000A' + otvetViberGetUserDetails);
-//  var VivodViberGetUserDetails =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage + '&text='+  urlViberOtvet);
-
-
-
-
-
-
-
-
-
-
+  if (otvetViberGetUserDetailsJSON.status_message != 'maximum get user info requests exceeded.') {
+      var result1 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfileGetUserDetails + '/sendMessage?chat_id=@' + ChatIdProfileGetUserDetails + '&text=' + urlIdNameAvatarLanguageCountryApi_versionGetUserDetails);
+  }
+    
   var answerString = extractTextFromMessage(postDataMessage);
-/*
-  var re = /&/gi;
-  var str = postDataMessage.sender.avatar;
-  var newstr = str.replace(re, '%26');
-  var urlAvatar = newstr;
-*/
-  var urlIdNameAvatarlLanguageCountryApi_version = encodeURIComponent(postDataMessage.sender.name + ': ' + answerString + '\u000A' + postDataMessage.sender.id);
-
-  var result2 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegram + '/sendMessage?chat_id=@' + ChatIdMessage + '&text= ' + urlIdNameAvatarlLanguageCountryApi_version);
-
-
-//  var result5 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramProfile + '/sendMessage?chat_id=@protocolCheckInUserProfile&text= ' + postData.sender.avatar);
-
-
-/*
-  var tablicaRaspisanie = SpreadsheetApp.getActiveSpreadsheet();
-
-  var raspisanieSheet = tablicaRaspisanie.getSheetByName(RASPISANIE_SHEET_NAME);
-
-  // Fetch the range of cells B2:B10
-  var raspisanieDataRange = raspisanieSheet.getRange(2, 1, 24, 2); // Skip header row; Read parameter rows
-  var MonUroki = [];
-  var TueUroki = [];
-  var WenUroki = [];
-  var TheUroki = [];
-  var FriUroki = [];
-  var MonUrok1;
-  var MonUrok2;
-  var MonUrok3;
-  var MonUrok4;
-  var MonUrok5;
-
-  // Fetch cell value for each row in the range.
-  var raspisData = raspisanieDataRange.getValues()
-  MonUrok1 = raspisData[0][1];
-  MonUrok2 = raspisData[1][1];
-  MonUrok3 = raspisData[2][1];
-  MonUrok4 = raspisData[3][1];
-  MonUrok5 = raspisData[4][1];
-  TueUroki[0] = raspisData[5][1];
-  TueUroki[1] = raspisData[6][1];
-  TueUroki[2] = raspisData[7][1];
-  TueUroki[3] = raspisData[8][1];
-  WenUroki [0] = raspisData[9][1];
-  WenUroki [1] = raspisData[10][1];
-  WenUroki [2] = raspisData[11][1];
-  WenUroki [3] = raspisData[12][1];
-  WenUroki [4] = raspisData[13][1];
-  TheUroki [0] = raspisData[14][1];
-  TheUroki [1] = raspisData[15][1];
-  TheUroki [2] = raspisData[16][1];
-  TheUroki [3] = raspisData[17][1];
-  TheUroki [4] = raspisData[18][1];
-  FriUroki [0] = raspisData[19][1];
-  FriUroki [1] = raspisData[20][1];
-  FriUroki [2] = raspisData[21][1];
-  FriUroki [3] = raspisData[22][1];
-
-  MonUroki[0] = MonUrok1;
-  MonUroki[1] = MonUrok2;
-  MonUroki[2] = MonUrok3;
-  MonUroki[3] = MonUrok4;
-  MonUroki[4] = MonUrok5;
-
-  var srtoka = raspisData.toString();
- */
-
-
-
+  var urlIdNameAvatarlLanguageCountryApi_versionMessage = encodeURIComponent('SendMessage \u000A' + postDataMessage.sender.name + ': ' + answerString + '\u000A' + postDataMessage.sender.id);
+  var result2 =  UrlFetchApp.fetch('https://api.telegram.org/bot' + accesTokenBotTelegramMessageUser + '/sendMessage?chat_id=@' + ChatIdMessageUser + '&text=' + urlIdNameAvatarlLanguageCountryApi_versionMessage);
+  
   switch (answerString) {
   case 'Понедельник':
       if (new Date().getDay().toString() == 1) {
@@ -462,7 +366,6 @@ function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnsw
         var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
 
         sayText(MondayNazwa + '\u000A' + td7 + '\u000A' + MondayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-    //    sayText('https://www.youtube.com/watch?v=iPW75ZO4pIA', getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
         var didHandle = true;
         return didHandle;
       } else {
@@ -470,8 +373,6 @@ function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnsw
         var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
 
         sayText(MondayNazwa + '\u000A' + td7 + '\u000A' + MondayRaspisanie.toString(), getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-    //    sayText('https://www.youtube.com/watch?v=iPW75ZO4pIA', getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-
         var didHandle = true;
         return didHandle;
       }
@@ -558,11 +459,9 @@ function tryToSendQuestion(postDataMessage, questionRow, questionIndex, userAnsw
     default:
       var keyboardObject = createKeyboard([MondayNazwa, TuesdayNazwa, WednesdayNazwa, ThersdayNazwa, FridayNazwa, ZvonkiNazwa]);
       sayText(gMessageDefault, getSenderId(postDataMessage), gAccessToken, gBotName, gBotAvatar, stateInSurvey(questionIndex, userAnswerRow), keyboardObject);
-        var didHandle = true;
-        return didHandle;
-
+      var didHandle = true;
+      return didHandle;
   }
-
 }
 
 function isValidAnswer(postData, questionRow) {
@@ -634,7 +533,8 @@ function sendQuestionStep(postData, trackingData, shouldAdvanceQuestionIfInSurve
     }
 
     var questionRow = getQuestionByIndex(questionIndex);
-    didHandle = tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow);
+//    didHandle = tryToSendQuestion(postData, questionRow, questionIndex, userAnswerRow);
+    didHandle = sendMessage(postData, questionRow, questionIndex, userAnswerRow);
   }
 
   if (!didHandle) {
@@ -702,10 +602,10 @@ function initializeGlobalParametersIfNeeded() {
   // Fetch cell value for each row in the range.
   var tokenssData = tokensDataRange.getValues()
   gAccessToken = tokenssData[0][1];
-  accesTokenBotTelegramProfile = tokenssData[1][1];
-  accesTokenBotTelegram = tokenssData[2][1];
-  ChatIdProfile = tokenssData[3][1];
-  ChatIdMessage = tokenssData[4][1];
+  accesTokenBotTelegramProfileGetUserDetails = tokenssData[1][1];
+  accesTokenBotTelegramMessageUser = tokenssData[2][1];
+  ChatIdProfileGetUserDetails = tokenssData[3][1];
+  ChatIdMessageUser = tokenssData[4][1];
 }
 
 // ---- Post/Get handlers ----
